@@ -79,7 +79,10 @@ public class DishService implements IDishService {
     	log.info("Adding dish to a restaurant...");
     	
     	Restaurant restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new RestaurantNotFoundException("Restaurant with the given ID not found. ID: " + restaurantId));
+    		    .orElseThrow(() -> {
+    		        log.error("Restaurant with the given ID {} not found", restaurantId);
+    		        return new RestaurantNotFoundException("Restaurant with the given ID not found. ID: " + restaurantId);
+    		    });
 
         Dish dish = Dish.builder()
                 .name(dishRequest.getName())
@@ -110,11 +113,16 @@ public class DishService implements IDishService {
     	log.info("Updating dish of a restaurant...");
     	
     	Restaurant restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new RestaurantNotFoundException("Restaurant with the given ID not found. ID: " + restaurantId));
+    		    .orElseThrow(() -> {
+    		        log.error("Restaurant with the given ID {} not found", restaurantId);
+    		        return new RestaurantNotFoundException("Restaurant with the given ID not found. ID: " + restaurantId);
+    		    });
 
-        Dish dish = dishRepository.findById(dishId)
-	        	.orElseThrow(() -> new DishNotFoundException("Dish with the given ID not found. ID: " + dishId));
-
+    		Dish dish = dishRepository.findById(dishId)
+    		    .orElseThrow(() -> {
+    		        log.error("Dish with the given ID {} not found", dishId);
+    		        return new DishNotFoundException("Dish with the given ID not found. ID: " + dishId);
+    		    });
 
         dish.setName(dishUpdateRequest.getName());
         dish.setPrice(dishUpdateRequest.getPrice());

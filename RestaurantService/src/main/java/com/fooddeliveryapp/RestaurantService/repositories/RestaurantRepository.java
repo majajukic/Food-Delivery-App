@@ -12,7 +12,7 @@ import com.fooddeliveryapp.RestaurantService.entities.Restaurant;
  * This interface extends JpaRepository, which provides basic CRUD operations and additional
  * functionalities for managing Restaurant entities in the database.
  * 
- * The first type parameter is the entity class (Restaurant) and the second is the type of the entity's ID (Long).
+ * The first type parameter is the entity class (Restaurant) and the second is the type of the entity's ID (UUID).
  */
 @Repository
 public interface RestaurantRepository extends JpaRepository<Restaurant, UUID>{

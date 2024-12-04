@@ -69,7 +69,10 @@ public class RestaurantService implements IRestaurantService {
 		log.info("Getting the restaurant by its ID: {}...", restaurantId);
 		
 		Restaurant restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new RestaurantNotFoundException("Restaurant with the given ID not found. ID: " + restaurantId));
+			    .orElseThrow(() -> {
+			        log.error("Restaurant with the given ID {} not found", restaurantId);
+			        throw new RestaurantNotFoundException("Restaurant with the given ID not found. ID: " + restaurantId);
+			    });
 		
 		RestaurantResponse restaurantResponse = new RestaurantResponse();
 		BeanUtils.copyProperties(restaurant, restaurantResponse);
@@ -120,7 +123,10 @@ public class RestaurantService implements IRestaurantService {
 	    log.info("Updating the restaurant with ID: {}", restaurantId);
 
 	    Restaurant restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new RestaurantNotFoundException("Restaurant with the given ID not found. ID: " + restaurantId));
+	    	    .orElseThrow(() -> {
+	    	        log.error("Restaurant with the given ID {} not found", restaurantId);
+	    	        throw new RestaurantNotFoundException("Restaurant with the given ID not found. ID: " + restaurantId);
+	    	    });
 
 	    restaurant.setName(restaurantRequest.getName());
 	    restaurant.setAddress(restaurantRequest.getAddress());

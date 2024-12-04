@@ -1,8 +1,7 @@
-package com.fooddeliveryapp.RestaurantService.entities;
+package com.example.fooddeliveryapp.OrderService.entities;
 
 import java.util.UUID;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,35 +15,31 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Represents a Dish entity in the database.
+ * Represents an OrderItem entity in the database.
  * This class is mapped to a table in the database where each instance
- * of this class corresponds to a dish record.
+ * of this class corresponds to an order item record.
  */
 @Entity
 @Data // Generates getters, setters, toString(), equals(), and hashCode() methods automatically.
 @AllArgsConstructor // Generates a constructor that accepts all fields as arguments.
 @NoArgsConstructor // Generates a no-argument constructor, which is required by JPA.
-@Builder // Implements the builder pattern, allowing for easy creation of Restaurant instances with specified values.
-public class Dish {
-	
-	@Id
+@Builder 
+public class OrderItem {
+ 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "dish_id")
+    @Column(name = "order_item_id")
+    private UUID orderItemId;
+
+    @ManyToOne
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order order;
+
+    @Column(name = "dish_id", nullable = false)
     private UUID dishId;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "restaurant_id", nullable = false)
-    private Restaurant restaurant;
+    @Column(name = "quantity", nullable = false)
+    private Integer quantity;
 
-    @Column(nullable = false, length = 100)
-    private String name;
-
-    @Column(nullable = false)
+    @Column(name = "price", nullable = false)
     private Double price;
-
-    @Column(length = 255)
-    private String description;
-
-    @Column(nullable = false)
-    private Boolean availability;
 }
