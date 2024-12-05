@@ -35,8 +35,8 @@ public class OrderController {
 	 *                       as well as the items included in the order.
 	 * @return A response containing the ID of the newly created order and a CREATED status (201).
 	 */
-	@PostMapping("/place-order")
-	public ResponseEntity<UUID> placeOrder(@RequestBody @Valid OrderRequest orderRequest) {
+	@PostMapping("/process-order")
+	public ResponseEntity<UUID> processOrder(@RequestBody @Valid OrderRequest orderRequest) {
 		UUID orderId = orderService.processOrder(orderRequest);
 		
 		return new ResponseEntity<>(orderId, HttpStatus.CREATED);

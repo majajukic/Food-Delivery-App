@@ -135,6 +135,8 @@ public class OrderService implements IOrderService{
 	    }).toList();
 	}
 	
+	// ========================== Helper Methods ==========================
+	
 	private double calculateTotalPrice(List<OrderItem> orderItems) {
 	    return orderItems.stream()
 	            .mapToDouble(item -> item.getPrice() * item.getQuantity())
