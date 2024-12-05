@@ -19,4 +19,6 @@ public interface IDishService {
 	List<DishResponse> getAllDishesForRestaurant(UUID restaurantId);
 
 	DishResponse updateDish(UUID restaurantId, UUID dishId, @Valid DishRequest dishRequest);
+
+	DishResponse getDishById(UUID dishId);
 }

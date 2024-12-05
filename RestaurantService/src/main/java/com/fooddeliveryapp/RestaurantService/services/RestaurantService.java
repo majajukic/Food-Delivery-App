@@ -62,7 +62,7 @@ public class RestaurantService implements IRestaurantService {
 	* 
 	* @param restaurantId - The UUID of the restaurant to retrieve.
 	* @return A RestaurantResponse object containing the restaurant details.
-	* @throws RuntimeException if the restaurant with the given ID is not found in the database.
+	* @throws RestaurantNotFoundException if no restaurant is found with the given ID.
 	*/ 
 	@Override
 	public RestaurantResponse getRestaurantById(UUID restaurantId) {
@@ -116,7 +116,7 @@ public class RestaurantService implements IRestaurantService {
 	 * @param restaurantId - The ID of the restaurant to be updated.
 	 * @param restaurantRequest - The data to update the restaurant (name, address, phone number, etc.).
 	 * @return The updated restaurant response with the updated data.
-	 * @throws RuntimeException if the restaurant with the given ID is not found in the database.
+	 * @throws RestaurantNotFoundException if no restaurant is found with the given ID.
 	 */
 	 @Override
 	 public RestaurantResponse updateRestaurant(UUID restaurantId, @Valid RestaurantRequest restaurantRequest) {
@@ -148,7 +148,7 @@ public class RestaurantService implements IRestaurantService {
 	  * if not, it throws an exception and logs an error.
 	  *
 	  * @param restaurantId - The ID of the restaurant to be deleted.
-	  * @throws RuntimeException if the restaurant with the given ID is not found in the database.
+	  * @throws RestaurantNotFoundException if no restaurant is found with the given ID.
 	  */
 	 @Override
 	 public void deleteRestaurant(UUID restaurantId) {

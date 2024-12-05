@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
+import com.example.fooddeliveryapp.OrderService.external.exceptions.DishNotAvailableException;
+import com.example.fooddeliveryapp.OrderService.external.exceptions.DishNotFoundException;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,20 +35,6 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles OrderItemNotFoundException and returns an appropriate response.
-     *
-     * @param ex The exception object
-     * @return A ResponseEntity with error message and 404 status code
-     */
-    @ExceptionHandler(OrderItemNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<Map<String, String>> handleOrderItemNotFound(OrderItemNotFoundException ex) {
-        Map<String, String> errorResponse = new HashMap<>();
-        errorResponse.put("error", ex.getMessage());
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
-    }
-
-    /**
      * Handles EmptyOrderException and returns an appropriate response.
      *
      * @param ex The exception object
@@ -54,6 +43,34 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(EmptyOrderException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Map<String, String>> handleEmptyOrderException(EmptyOrderException ex) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("error", ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+    
+    /**
+     * Handles DishNotFoundException and returns an appropriate response.
+     * 
+     * @param ex The exception object
+     * @return A ResponseEntity with error message and 404 status code
+     */
+    @ExceptionHandler(DishNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<Map<String, String>> handleDishNotFound(DishNotFoundException ex) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("error", ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+    
+    /**
+     * Handles DishNotAvailableException and returns an appropriate response.
+     *
+     * @param ex The exception object
+     * @return A ResponseEntity with error message and 400 status code
+     */
+    @ExceptionHandler(DishNotAvailableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Map<String, String>> handleDishNotAvailable(DishNotAvailableException ex) {
         Map<String, String> errorResponse = new HashMap<>();
         errorResponse.put("error", ex.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);

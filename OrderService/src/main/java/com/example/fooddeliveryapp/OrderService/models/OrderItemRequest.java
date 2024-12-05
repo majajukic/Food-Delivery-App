@@ -4,7 +4,6 @@ import java.util.UUID;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 /**
@@ -20,8 +19,4 @@ public class OrderItemRequest {
 	@NotNull(message = "Quantity must not be null")
     @Min(value = 1, message = "Quantity must be at least 1")
     private Integer quantity;
-	
-	@NotNull(message = "Price must not be null")
-    @Positive(message = "Price must be a positive value")
-    private Double price; // to-do: get this value from restaurant service (Dish price) once the communication is established
 }

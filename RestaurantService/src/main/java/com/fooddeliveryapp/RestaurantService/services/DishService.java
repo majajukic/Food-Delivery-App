@@ -66,6 +66,37 @@ public class DishService implements IDishService {
         
         return dishResponses;
     }
+    
+    /**
+     * Retrieves a specific dish by its ID.
+     * This method accepts a dish ID, fetches the corresponding dish entity from the database,
+     * and maps it to a DishResponse object. If the dish is not found, a custom exception is thrown.
+     *
+     * @param dishId - The ID of the dish to be retrieved.
+     * @return A DishResponse object containing the details of the specified dish.
+     * @throws DishNotFoundException if no dish is found with the given ID.
+     */
+	@Override
+	public DishResponse getDishById(UUID dishId) {
+		log.info("Retrieving dish with an ID of {} ", dishId);
+		
+		 Dish dish = dishRepository.findById(dishId)
+	            .orElseThrow(() -> {
+	            	log.error("Dish with an ID of {} not found", dishId);
+	            	return new DishNotFoundException("Dish with a given ID not found. ID: " + dishId);
+	            });
+		 
+		 DishResponse dishResponse = new DishResponse();
+		 dishResponse.setDishId(dish.getDishId());
+		 dishResponse.setName(dish.getName());
+		 dishResponse.setPrice(dish.getPrice());
+		 dishResponse.setDescription(dish.getDescription());
+		 dishResponse.setAvailability(dish.getAvailability());
+		 
+		 log.info("Dish with an ID of {} successfully retrieved.", dishId);
+		 
+		 return dishResponse;
+	}
 
     /**
      * Adds a new dish to a restaurant.
@@ -73,6 +104,7 @@ public class DishService implements IDishService {
      * @param restaurantId The ID of the restaurant to which the dish will be added.
      * @param dishRequest The data for the new dish.
      * @return The UUID of the newly created dish.
+     * @throws RestaurantNotFoundException if no restaurant is found with the given ID.
      */
     @Override
     public UUID addDishToRestaurant(UUID restaurantId, @Valid DishRequest dishRequest) {
@@ -107,6 +139,8 @@ public class DishService implements IDishService {
      * @param dishId            The ID of the dish to be updated.
      * @param dishUpdateRequest The request object containing the updated dish data.
      * @return A DishResponse object containing the updated details of the dish.
+     * @throws RestaurantNotFoundException if no restaurant is found with the given ID.
+     * @throws DishNotFoundException if no dish is found with the given ID.
      */
     @Override
     public DishResponse updateDish(UUID restaurantId, UUID dishId, @Valid DishRequest dishUpdateRequest) {

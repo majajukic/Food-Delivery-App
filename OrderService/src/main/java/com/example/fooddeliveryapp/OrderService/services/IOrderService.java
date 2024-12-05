@@ -14,9 +14,7 @@ import jakarta.validation.Valid;
  */
 public interface IOrderService {
 
-	UUID placeOrder(@Valid OrderRequest orderRequest);
-
-	void removeItemFromOrder(UUID orderId, UUID itemId);
+	UUID processOrder(@Valid OrderRequest orderRequest);
 
 	void updateOrderStatus(UUID orderId, OrderStatus newStatus);
 }

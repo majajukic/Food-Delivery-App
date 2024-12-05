@@ -126,6 +126,21 @@ public class RestaurantController {
         List<DishResponse> dishes = dishService.getAllDishesForRestaurant(restaurantId);
         return new ResponseEntity<>(dishes, HttpStatus.OK);
     }
+    
+    /**
+     * Retrieves a specific dish by its ID.
+     * This method accepts a dish ID as a path variable, fetches the corresponding dish entity,
+     * and returns the dish details in the response body.
+     *
+     * @param dishId - The ID of the dish to retrieve.
+     * @return A response containing the dish details and an OK status (200).
+     */
+    @GetMapping("/dishes/{dishId}")
+    public ResponseEntity<DishResponse> getDishById(@PathVariable UUID dishId) {
+        DishResponse dishResponse = dishService.getDishById(dishId);
+        
+        return new ResponseEntity<>(dishResponse, HttpStatus.OK);
+    }
 	
 	/**
      * Adds a new dish to a restaurant.

@@ -37,7 +37,7 @@ public class OrderController {
 	 */
 	@PostMapping("/place-order")
 	public ResponseEntity<UUID> placeOrder(@RequestBody @Valid OrderRequest orderRequest) {
-		UUID orderId = orderService.placeOrder(orderRequest);
+		UUID orderId = orderService.processOrder(orderRequest);
 		
 		return new ResponseEntity<>(orderId, HttpStatus.CREATED);
 	}
@@ -58,19 +58,5 @@ public class OrderController {
         return new ResponseEntity<>(HttpStatus.OK); 
     }
 	
-	/**
-     * Removes an item from the order and updates the total price.
-     * 
-     * @param orderId - The ID of the order from which the item is to be removed.
-     * @param itemId - The ID of the item to remove from the order.
-     * @return A response with a NO_CONTENT status (204) indicating successful deletion.
-     */
-    @DeleteMapping("/{id}/remove-item/{itemId}")
-    public ResponseEntity<Void> removeItemFromOrder(@PathVariable("id") UUID orderId, @PathVariable UUID itemId) {
-        orderService.removeItemFromOrder(orderId, itemId);
-
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
-    }
-    
-    // to-do: add endpoints for increasing/decreasing quantity of items in an order and for getting order details when communication with Restaurant service is implemented
+    // to-do: add endpoint for getting order details (with items, payment details and delivery details if possible)
 }
