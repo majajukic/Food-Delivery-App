@@ -39,7 +39,6 @@ public class PaymentService implements IPaymentService {
 		
 		PaymentDetails paymentDetails = PaymentDetails.builder()
 				.orderId(paymentRequest.getOrderId())
-				.referenceNumber(paymentRequest.getReferenceNumber())
 				.amount(paymentRequest.getAmount())
 				.paymentMode(paymentRequest.getPaymentMode())
 				.timestamp(LocalDateTime.now())

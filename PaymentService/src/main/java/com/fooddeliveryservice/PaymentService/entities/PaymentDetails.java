@@ -42,9 +42,6 @@ public class PaymentDetails {
 	@Column(name = "payment_mode", nullable = false)
 	private PaymentMode paymentMode;
 	
-	@Column(name = "reference_number", nullable = false, length = 50)
-	private String referenceNumber;
-	
 	@Column(name = "timestamp", nullable = false)
     private LocalDateTime timestamp;
 	

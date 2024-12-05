@@ -13,12 +13,20 @@ import com.example.fooddeliveryapp.OrderService.entities.Order;
 import com.example.fooddeliveryapp.OrderService.entities.OrderItem;
 import com.example.fooddeliveryapp.OrderService.exceptions.EmptyOrderException;
 import com.example.fooddeliveryapp.OrderService.exceptions.OrderNotFoundException;
+import com.example.fooddeliveryapp.OrderService.external.clients.IPaymentService;
 import com.example.fooddeliveryapp.OrderService.external.clients.IRestaurantService;
 import com.example.fooddeliveryapp.OrderService.external.exceptions.DishNotAvailableException;
 import com.example.fooddeliveryapp.OrderService.external.exceptions.DishNotFoundException;
 import com.example.fooddeliveryapp.OrderService.external.models.DishResponse;
+import com.example.fooddeliveryapp.OrderService.external.models.PaymentRequest;
 import com.example.fooddeliveryapp.OrderService.models.OrderRequest;
 import com.example.fooddeliveryapp.OrderService.repositories.OrderRepository;
+
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
 
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
@@ -34,11 +42,13 @@ public class OrderService implements IOrderService{
 
 	private final OrderRepository orderRepository;
 	private final IRestaurantService restaurantService;
+	private final IPaymentService paymentService;
 	
 	@Autowired
-	public OrderService(OrderRepository orderRepository, IRestaurantService restaurantService) {
+	public OrderService(OrderRepository orderRepository, IRestaurantService restaurantService, IPaymentService paymentService) {
 		this.orderRepository = orderRepository;
 		this.restaurantService = restaurantService;
+		this.paymentService = paymentService;
 	}
 	
 	/**
@@ -71,11 +81,11 @@ public class OrderService implements IOrderService{
 
 	    double totalPrice = calculateTotalPrice(orderItems);
 
-	    processPayment(orderRequest, totalPrice);
-
 	    Order order = saveOrder(orderRequest, orderItems, totalPrice);
+	    
+	    processPayment(order, orderRequest);
 
-	    initiateDelivery(order);
+	    //initiateDelivery(order);
 
 	    log.info("Order processed and delivered successfully.");
 	    
@@ -95,15 +105,13 @@ public class OrderService implements IOrderService{
 	public void updateOrderStatus(UUID orderId, OrderStatus newStatus) {    
 	    log.info("Updating order status for an order with an ID of {}", orderId);
 
-	    Order order = orderRepository.findById(orderId)
+	    orderRepository.findById(orderId)
 	    		.orElseThrow(() -> {
 	                log.error("Order with ID {} not found", orderId);
 	                return new OrderNotFoundException("Order with an ID of " + orderId + " not found");
 	            });
 
-	    order.setStatus(newStatus);
-
-	    orderRepository.save(order);
+	    orderRepository.updateOrderStatus(orderId, newStatus);
 
 	    log.info("Status update for an order with an ID of {} successful", orderId);
 	}
@@ -135,23 +143,12 @@ public class OrderService implements IOrderService{
 	    }).toList();
 	}
 	
-	// ========================== Helper Methods ==========================
+	// ========================== HELPER METHODS ==========================
 	
 	private double calculateTotalPrice(List<OrderItem> orderItems) {
 	    return orderItems.stream()
 	            .mapToDouble(item -> item.getPrice() * item.getQuantity())
 	            .sum();
-	}
-	
-	private void processPayment(OrderRequest orderRequest, double totalPrice) {
-		log.info("Processing payment...");
-	    /*PaymentRequest paymentRequest = new PaymentRequest(orderRequest.getUserId(), totalPrice, orderRequest.getPaymentDetails());
-	    ResponseEntity<PaymentResponse> paymentResponse = paymentService.processPayment(paymentRequest);
-
-	    if (!paymentResponse.getStatusCode().is2xxSuccessful() || !paymentResponse.getBody().isPaymentSuccessful()) {
-	        log.error("Payment failed for order.");
-	        throw new PaymentException("Payment processing failed.");
-	    }*/
 	}
 	
 	private Order saveOrder(OrderRequest orderRequest, List<OrderItem> orderItems, double totalPrice) {
@@ -168,6 +165,27 @@ public class OrderService implements IOrderService{
 	    orderRepository.save(order);
 	    
 	    return order;
+	}
+	
+	private void processPayment(Order order, OrderRequest orderRequest) {
+	    PaymentRequest paymentRequest = PaymentRequest.builder()
+	    		.orderId(order.getOrderId())
+	    		.paymentMode(orderRequest.getPaymentMode())
+	    		.amount(order.getTotalPrice())
+	    		.build();
+	    
+	    OrderStatus orderStatus = null;
+	    
+	    try {
+	    	paymentService.pay(paymentRequest);
+	    	orderStatus = OrderStatus.PAYED;
+	    	// to-do: initiate delivery here after successful payment
+	    } catch(Exception ex) {
+	    	log.error("Error occured in Payment service while processing payment. Error: {} ", ex.getMessage());
+	    	orderStatus = OrderStatus.CANCELED;
+	    }
+	    
+	    updateOrderStatus(order.getOrderId(), orderStatus);
 	}
 	
 	private void initiateDelivery(Order order) {

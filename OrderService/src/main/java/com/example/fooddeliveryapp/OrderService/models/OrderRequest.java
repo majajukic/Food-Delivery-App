@@ -3,6 +3,8 @@ package com.example.fooddeliveryapp.OrderService.models;
 import java.util.List;
 import java.util.UUID;
 
+import com.example.fooddeliveryapp.OrderService.constants.PaymentMode;
+
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -18,6 +20,9 @@ public class OrderRequest {
 	
 	@NotNull(message = "Restaurant ID must not be null")
     private UUID restaurantId;
+	
+	@NotNull(message = "Payment mode should not be null")
+	private PaymentMode paymentMode;
 	
 	@NotEmpty(message = "Order items must not be empty")
     private List<@NotNull(message = "Each order item must not be null")OrderItemRequest> items;

@@ -6,6 +6,7 @@ package com.example.fooddeliveryapp.OrderService.constants;
  */
 public enum OrderStatus {
 	PLACED,
+	PAYED,
 	DELIVERING,
 	DELIVERED,
 	CANCELED
