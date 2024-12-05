@@ -1,6 +1,7 @@
 package com.example.fooddeliveryapp.OrderService.services;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,13 +20,10 @@ import com.example.fooddeliveryapp.OrderService.external.exceptions.DishNotAvail
 import com.example.fooddeliveryapp.OrderService.external.exceptions.DishNotFoundException;
 import com.example.fooddeliveryapp.OrderService.external.models.DishResponse;
 import com.example.fooddeliveryapp.OrderService.external.models.PaymentRequest;
+import com.example.fooddeliveryapp.OrderService.external.models.PaymentResponse;
 import com.example.fooddeliveryapp.OrderService.models.OrderRequest;
+import com.example.fooddeliveryapp.OrderService.models.OrderResponse;
 import com.example.fooddeliveryapp.OrderService.repositories.OrderRepository;
-
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 
 import jakarta.validation.Valid;
@@ -49,6 +47,47 @@ public class OrderService implements IOrderService{
 		this.orderRepository = orderRepository;
 		this.restaurantService = restaurantService;
 		this.paymentService = paymentService;
+	}
+	
+    /**
+     * Retrieves the details of a specific order by its ID.
+     * 
+     * This method fetches an order from the database, including its associated items, 
+     * and other related information. It maps the retrieved order entity 
+     * to an `OrderResponse` object, which is used as a DTO to send data to the client.
+     * 
+     * @param orderId - The unique identifier of the order to retrieve.
+     * @return An `OrderResponse` object containing the details of the requested order.
+     * @throws OrderNotFoundException if the order with the given ID does not exist.
+     */
+	@Override
+	public OrderResponse getOrderDetails(UUID orderId) {
+		log.info("Retrieving order with an ID of {} ...", orderId);
+		
+		Order order = orderRepository.findById(orderId)
+	    		.orElseThrow(() -> {
+	                log.error("Order with ID {} not found", orderId);
+	                return new OrderNotFoundException("Order with an ID of " + orderId + " not found");
+	            });
+		
+		// fetching dish details for each order item from restaurant service
+		List<DishResponse> dishes = fetchDishesForOrderItems(order.getOrderItems());
+		
+		// fetching payment details from Payment service
+		PaymentResponse paymentDetails = fetchPaymentDetailsByOrderId(order.getOrderId());
+		
+		OrderResponse orderResponse = OrderResponse.builder()
+				.orderId(order.getOrderId())
+				.status(order.getStatus())
+				.amount(order.getTotalPrice())
+				.timestamp(order.getTimestamp())
+				.dishes(dishes)
+				.paymentDetails(paymentDetails)
+				.build();
+		
+		log.info("Order with an ID of {} retireved successfully.", orderId);
+		
+		return orderResponse;
 	}
 	
 	/**
@@ -116,6 +155,30 @@ public class OrderService implements IOrderService{
 	    log.info("Status update for an order with an ID of {} successful", orderId);
 	}
 	
+	// ========================== HELPER METHODS ==========================
+	
+	private List<DishResponse> fetchDishesForOrderItems(List<OrderItem> orderItems) {
+	    List<DishResponse> dishDetails = new ArrayList<>();
+	    
+	    for (OrderItem item : orderItems) {
+	        DishResponse dishResponse = restaurantService.getDishById(item.getDishId()).getBody();
+	        
+	        if (dishResponse != null) {
+	            dishDetails.add(dishResponse);
+	        } else {
+	            log.error("Dish with ID {} not found for the order item.", item.getDishId());
+	        }
+	    }
+	    
+	    return dishDetails;
+	}
+	
+	private PaymentResponse fetchPaymentDetailsByOrderId(UUID orderId) {
+		PaymentResponse paymentResponse = paymentService.getPaymentDetailsByOrderId(orderId).getBody();
+		
+		return paymentResponse;
+	}
+	
 	private List<OrderItem> validateAndPrepareOrderItems(OrderRequest orderRequest) {
 	    if (orderRequest.getItems() == null || orderRequest.getItems().isEmpty()) {
 	        log.error("Cannot save an order with no items.");
@@ -142,8 +205,6 @@ public class OrderService implements IOrderService{
 	        return orderItem;
 	    }).toList();
 	}
-	
-	// ========================== HELPER METHODS ==========================
 	
 	private double calculateTotalPrice(List<OrderItem> orderItems) {
 	    return orderItems.stream()

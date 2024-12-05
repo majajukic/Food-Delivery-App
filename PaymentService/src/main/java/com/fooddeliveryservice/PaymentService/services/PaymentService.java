@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 
 import com.fooddeliveryservice.PaymentService.constants.PaymentStatus;
 import com.fooddeliveryservice.PaymentService.entities.PaymentDetails;
+import com.fooddeliveryservice.PaymentService.exceptions.PaymentNotFoundException;
 import com.fooddeliveryservice.PaymentService.models.PaymentRequest;
+import com.fooddeliveryservice.PaymentService.models.PaymentResponse;
 import com.fooddeliveryservice.PaymentService.repositories.PaymentRepository;
 
 import jakarta.validation.Valid;
@@ -20,6 +22,38 @@ public class PaymentService implements IPaymentService {
 	
 	@Autowired
 	private PaymentRepository paymentRepository;
+	
+	/**
+	 * Retrieves the payment details for a specific order.
+	 * This method fetches payment information associated with the provided order ID 
+	 * and returns it as a PaymentResponse object.
+	 * 
+	 * @param orderId - The ID of the order whose payment details are to be retrieved.
+	 * @return A PaymentResponse object containing the payment details.
+	 * @throws PaymentNotFoundException if no payment is found for the given order ID.
+	 */
+	@Override
+	public PaymentResponse getPaymentDetailsByOrderId(UUID orderId) {
+		log.info("Retrieving details for payment with an order ID of {}...", orderId);
+		
+		PaymentDetails paymentDetails = paymentRepository.findByOrderId(orderId)
+		        .orElseThrow(() -> {
+		            log.error("Payment with order ID of {} not found", orderId);
+		            return new PaymentNotFoundException("Payment with an order ID of " + orderId + " not found");
+		        });
+
+		
+		PaymentResponse paymentResponse = PaymentResponse.builder()
+				.paymentId(paymentDetails.getPaymentId())
+				.paymentMode(paymentDetails.getPaymentMode())
+				.status(paymentDetails.getStatus())
+				.timestamp(paymentDetails.getTimestamp())
+				.build();
+		
+		log.info("Payment details for the payment with an order ID of {} retireved successfully.", orderId);
+		
+		return paymentResponse;
+	}
 	
 	/**
 	 * Processes a payment and saves the payment details in the database.

@@ -3,7 +3,7 @@ package com.example.fooddeliveryapp.OrderService.models;
 import java.util.List;
 import java.util.UUID;
 
-import com.example.fooddeliveryapp.OrderService.constants.PaymentMode;
+import com.example.fooddeliveryapp.OrderService.external.constants.PaymentMode;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

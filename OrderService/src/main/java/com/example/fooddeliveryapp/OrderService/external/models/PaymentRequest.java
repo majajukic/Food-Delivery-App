@@ -2,11 +2,10 @@ package com.example.fooddeliveryapp.OrderService.external.models;
 
 import java.util.UUID;
 
-import com.example.fooddeliveryapp.OrderService.constants.PaymentMode;
+import com.example.fooddeliveryapp.OrderService.external.constants.PaymentMode;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

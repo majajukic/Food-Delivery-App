@@ -9,12 +9,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.example.fooddeliveryapp.OrderService.constants.OrderStatus;
 import com.example.fooddeliveryapp.OrderService.models.OrderRequest;
+import com.example.fooddeliveryapp.OrderService.models.OrderResponse;
 import com.example.fooddeliveryapp.OrderService.services.IOrderService;
 
 import jakarta.validation.Valid;
@@ -24,6 +26,21 @@ import jakarta.validation.Valid;
 public class OrderController {
 	@Autowired
 	private IOrderService orderService;
+	
+	 /**
+     * Retrieves the details of a specific order by its ID.
+     * This method fetches the order details, including associated items and other metadata, 
+     * from the database and returns them in the response.
+     * 
+     * @param orderId - The unique identifier of the order to retrieve.
+     * @return A response containing the details of the requested order and an OK status (200).
+     */
+	@GetMapping("/{id}")
+	public ResponseEntity<OrderResponse> getOrderDetails(@PathVariable("id") UUID orderId) {
+		OrderResponse orderResponse = orderService.getOrderDetails(orderId);
+		
+		return new ResponseEntity<>(orderResponse, HttpStatus.OK);
+	}
 	
 	/**
 	 * Places a new order for a user.
@@ -57,6 +74,4 @@ public class OrderController {
         
         return new ResponseEntity<>(HttpStatus.OK); 
     }
-	
-    // to-do: add endpoint for getting order details (with items, payment details and delivery details if possible)
 }

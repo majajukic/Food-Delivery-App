@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import com.example.fooddeliveryapp.OrderService.constants.OrderStatus;
 import com.example.fooddeliveryapp.OrderService.models.OrderRequest;
+import com.example.fooddeliveryapp.OrderService.models.OrderResponse;
 
 import jakarta.validation.Valid;
 
@@ -17,4 +18,6 @@ public interface IOrderService {
 	UUID processOrder(@Valid OrderRequest orderRequest);
 	
 	void updateOrderStatus(UUID orderId, OrderStatus newStatus);
+
+	OrderResponse getOrderDetails(UUID orderId);
 }

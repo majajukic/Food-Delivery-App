@@ -3,6 +3,7 @@ package com.fooddeliveryservice.PaymentService.services;
 import java.util.UUID;
 
 import com.fooddeliveryservice.PaymentService.models.PaymentRequest;
+import com.fooddeliveryservice.PaymentService.models.PaymentResponse;
 
 import jakarta.validation.Valid;
 
@@ -14,4 +15,6 @@ import jakarta.validation.Valid;
 public interface IPaymentService {
 
 	UUID createPayment(@Valid PaymentRequest paymentRequest);
+
+	PaymentResponse getPaymentDetailsByOrderId(UUID orderId);
 }

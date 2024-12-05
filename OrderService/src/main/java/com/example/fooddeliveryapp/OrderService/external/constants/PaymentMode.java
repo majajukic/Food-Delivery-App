@@ -1,4 +1,4 @@
-package com.example.fooddeliveryapp.OrderService.constants;
+package com.example.fooddeliveryapp.OrderService.external.constants;
 
 /**
  * Represents the mode of the payment.

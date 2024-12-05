@@ -4,10 +4,13 @@ import java.util.UUID;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.example.fooddeliveryapp.OrderService.external.models.PaymentRequest;
+import com.example.fooddeliveryapp.OrderService.external.models.PaymentResponse;
 
 import jakarta.validation.Valid;
 
@@ -20,4 +23,7 @@ import jakarta.validation.Valid;
 public interface IPaymentService {
 	@PostMapping
 	ResponseEntity<UUID> pay(@RequestBody @Valid PaymentRequest paymentRequest);
+	
+	@GetMapping("{orderId}")
+	ResponseEntity<PaymentResponse> getPaymentDetailsByOrderId(@PathVariable UUID orderId);
 }

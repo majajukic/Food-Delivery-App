@@ -1,5 +1,6 @@
 package com.fooddeliveryservice.PaymentService.repositories;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,5 +17,13 @@ import com.fooddeliveryservice.PaymentService.entities.PaymentDetails;
  */
 @Repository
 public interface PaymentRepository extends JpaRepository<PaymentDetails, UUID>{
-
+	/**
+	 * Retrieves a PaymentDetails entity by the associated order ID.
+	 * This method is used to find the payment information that corresponds to a specific order.
+	 * It returns an Optional containing the PaymentDetails if found, or an empty Optional if no payment is associated with the provided order ID.
+	 * 
+	 * @param orderId - The ID of the order for which the payment details are to be retrieved.
+	 * @return An Optional containing the PaymentDetails for the given orderId, or an empty Optional if no payment is found.
+	 */
+	Optional<PaymentDetails> findByOrderId(UUID orderId);
 }
