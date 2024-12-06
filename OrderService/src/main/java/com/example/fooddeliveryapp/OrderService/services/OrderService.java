@@ -20,6 +20,7 @@ import com.example.fooddeliveryapp.OrderService.external.clients.IRestaurantServ
 import com.example.fooddeliveryapp.OrderService.external.exceptions.DishNotAvailableException;
 import com.example.fooddeliveryapp.OrderService.external.exceptions.DishNotFoundException;
 import com.example.fooddeliveryapp.OrderService.external.models.DeliveryRequest;
+import com.example.fooddeliveryapp.OrderService.external.models.DeliveryResponse;
 import com.example.fooddeliveryapp.OrderService.external.models.DishResponse;
 import com.example.fooddeliveryapp.OrderService.external.models.PaymentRequest;
 import com.example.fooddeliveryapp.OrderService.external.models.PaymentResponse;
@@ -80,6 +81,8 @@ public class OrderService implements IOrderService{
 		// fetching payment details from Payment service
 		PaymentResponse paymentDetails = fetchPaymentDetailsByOrderId(order.getOrderId());
 		
+		DeliveryResponse deliveryDetails = fetchDeliveryDetailsByOrderId(order.getOrderId());
+		
 		OrderResponse orderResponse = OrderResponse.builder()
 				.orderId(order.getOrderId())
 				.status(order.getStatus())
@@ -87,6 +90,7 @@ public class OrderService implements IOrderService{
 				.createdAt(order.getTimestamp())
 				.dishes(dishes)
 				.paymentDetails(paymentDetails)
+				.deliveryDetails(deliveryDetails)
 				.build();
 		
 		log.info("Order with an ID of {} retireved successfully.", orderId);
@@ -183,6 +187,12 @@ public class OrderService implements IOrderService{
 		PaymentResponse paymentResponse = paymentService.getPaymentDetailsByOrderId(orderId).getBody();
 		
 		return paymentResponse;
+	}
+	
+	private DeliveryResponse fetchDeliveryDetailsByOrderId(UUID orderId) {
+		DeliveryResponse deliveryResponse = deliveryService.getDeliveryDetailsByOrderId(orderId).getBody();
+		
+		return deliveryResponse;
 	}
 	
 	private List<OrderItem> validateAndPrepareOrderItems(OrderRequest orderRequest) {

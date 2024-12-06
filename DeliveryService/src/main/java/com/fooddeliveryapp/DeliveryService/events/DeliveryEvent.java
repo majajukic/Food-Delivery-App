@@ -8,6 +8,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Represents an event related to a delivery.
+ * This event is used to communicate the delivery status of a delivery between Delivery and order services.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

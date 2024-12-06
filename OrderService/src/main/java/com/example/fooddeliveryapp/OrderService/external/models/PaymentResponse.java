@@ -11,6 +11,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
+/**
+ * Represents a response model for a payment.
+ * This model is used to transfer data from the server
+ * to the client when retrieving payment record(s).
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

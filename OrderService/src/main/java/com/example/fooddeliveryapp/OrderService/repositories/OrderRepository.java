@@ -21,6 +21,17 @@ import com.example.fooddeliveryapp.OrderService.entities.Order;
  */
 @Repository
 public interface OrderRepository extends JpaRepository<Order, UUID> {
+	/**
+     * Custom JPA query method to update the status of an order by its ID.
+     * This method performs an update operation on the Order entity to change its status based on the provided 
+     * order ID and the new status value.
+     * 
+     * The `@Modifying` annotation indicates that this is a modifying query, meaning it will update the database.
+     * The `@Transactional` annotation ensures that the operation is performed within a transactional context.
+     * 
+     * @param orderId The UUID of the order whose status needs to be updated.
+     * @param newStatus The new status to set for the order.
+     */
 	@Modifying
 	@Transactional
 	@Query("UPDATE Order o SET o.status = :newStatus WHERE o.orderId = :orderId")

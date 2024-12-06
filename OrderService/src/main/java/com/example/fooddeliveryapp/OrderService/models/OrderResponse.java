@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.example.fooddeliveryapp.OrderService.constants.OrderStatus;
+import com.example.fooddeliveryapp.OrderService.external.models.DeliveryResponse;
 import com.example.fooddeliveryapp.OrderService.external.models.DishResponse;
 import com.example.fooddeliveryapp.OrderService.external.models.PaymentResponse;
 
@@ -29,4 +30,5 @@ public class OrderResponse {
 	private Double amount;
 	private List<DishResponse> dishes;
 	private PaymentResponse paymentDetails;
+	private DeliveryResponse deliveryDetails;
 }

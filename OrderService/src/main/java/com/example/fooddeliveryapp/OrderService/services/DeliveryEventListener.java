@@ -26,6 +26,12 @@ public class DeliveryEventListener {
     	this.objectMapper = objectMapper;
     }
 
+    /**
+     * Kafka listener method that listens for delivery events on the "delivery-topic".
+     * The method processes delivery events dispatched from delivery service and updates the status of the corresponding order.
+     * 
+     * @param message The raw message containing delivery event details.
+     */
     @KafkaListener(topics = "delivery-topic", groupId = "order-group")
     public void handleDeliveryEvent(String message) {
         try {
