@@ -75,12 +75,10 @@ public class OrderService implements IOrderService{
 	                return new OrderNotFoundException("Order with an ID of " + orderId + " not found");
 	            });
 		
-		// fetching dish details for each order item from restaurant service
 		List<DishResponse> dishes = fetchDishesForOrderItems(order.getOrderItems());
-		
-		// fetching payment details from Payment service
+
 		PaymentResponse paymentDetails = fetchPaymentDetailsByOrderId(order.getOrderId());
-		
+
 		DeliveryResponse deliveryDetails = fetchDeliveryDetailsByOrderId(order.getOrderId());
 		
 		OrderResponse orderResponse = OrderResponse.builder()
