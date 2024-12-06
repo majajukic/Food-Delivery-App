@@ -8,13 +8,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import com.example.fooddeliveryapp.OrderService.constants.OrderStatus;
 import com.example.fooddeliveryapp.OrderService.models.OrderRequest;
 import com.example.fooddeliveryapp.OrderService.models.OrderResponse;
 import com.example.fooddeliveryapp.OrderService.services.IOrderService;
@@ -58,20 +55,4 @@ public class OrderController {
 		
 		return new ResponseEntity<>(orderId, HttpStatus.CREATED);
 	}
-	
-	 /**
-     * Updates the status of an existing order.
-     * This method receives the order ID and the new status, and it updates the 
-     * order's status in the database.
-     * 
-     * @param orderId - The ID of the order whose status needs to be updated.
-     * @param newStatus - The new status to set for the order.
-     * @return A response indicating whether the update was successful or not.
-     */
-    @PatchMapping("/{id}/update-status")
-    public ResponseEntity<Void> updateOrderStatus(@PathVariable("id") UUID orderId, @RequestBody OrderStatus newStatus) {
-        orderService.updateOrderStatus(orderId, newStatus);
-        
-        return new ResponseEntity<>(HttpStatus.OK); 
-    }
 }

@@ -141,30 +141,6 @@ public class OrderService implements IOrderService{
 	    return order.getOrderId();
 	}
 	
-	/**
-	 * Updates the status of an existing order.
-	 * 
-	 * This method retrieves the order using the provided order ID, updates its status
-	 * to the specified new status, and saves the updated order back to the database.
-	 * 
-	 * @param orderId - The ID of the order whose status needs to be updated.
-	 * @param newStatus - The new status to set for the order.
-	 */
-	@Override
-	public void updateOrderStatus(UUID orderId, OrderStatus newStatus) {    
-	    log.info("Updating order status for an order with an ID of {}", orderId);
-
-	    orderRepository.findById(orderId)
-	    		.orElseThrow(() -> {
-	                log.error("Order with ID {} not found", orderId);
-	                return new OrderNotFoundException("Order with an ID of " + orderId + " not found");
-	            });
-
-	    orderRepository.updateOrderStatus(orderId, newStatus);
-
-	    log.info("Status update for an order with an ID of {} successful", orderId);
-	}
-	
 	// ========================== HELPER METHODS ==========================
 	
 	private List<DishResponse> fetchDishesForOrderItems(List<OrderItem> orderItems) {
@@ -279,5 +255,19 @@ public class OrderService implements IOrderService{
 	    } catch (Exception ex) {
 	        log.error("Failed to initiate delivery for order: {}. Error: {}", order.getOrderId(), ex.getMessage());
 	    }
+	}
+	
+	private void updateOrderStatus(UUID orderId, OrderStatus newStatus) {    
+	    log.info("Updating order status for an order with an ID of {}", orderId);
+
+	    orderRepository.findById(orderId)
+	    		.orElseThrow(() -> {
+	                log.error("Order with ID {} not found", orderId);
+	                return new OrderNotFoundException("Order with an ID of " + orderId + " not found");
+	            });
+
+	    orderRepository.updateOrderStatus(orderId, newStatus);
+
+	    log.info("Status update for an order with an ID of {} successful", orderId);
 	}
 }
