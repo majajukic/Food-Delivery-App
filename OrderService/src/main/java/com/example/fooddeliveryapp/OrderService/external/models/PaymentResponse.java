@@ -19,5 +19,5 @@ public class PaymentResponse {
 	private UUID paymentId;
 	private PaymentMode paymentMode;
 	private PaymentStatus status;
-	private LocalDateTime timestamp;
+	private LocalDateTime payedOn;
 }

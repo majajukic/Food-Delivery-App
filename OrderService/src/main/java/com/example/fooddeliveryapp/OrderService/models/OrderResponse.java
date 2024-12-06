@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class OrderResponse {
 	private UUID orderId;
-	private LocalDateTime timestamp;
+	private LocalDateTime createdAt;
 	private OrderStatus status;
 	private Double amount;
 	private List<DishResponse> dishes;

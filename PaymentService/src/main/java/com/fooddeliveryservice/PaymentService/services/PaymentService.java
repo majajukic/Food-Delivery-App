@@ -47,7 +47,7 @@ public class PaymentService implements IPaymentService {
 				.paymentId(paymentDetails.getPaymentId())
 				.paymentMode(paymentDetails.getPaymentMode())
 				.status(paymentDetails.getStatus())
-				.timestamp(paymentDetails.getTimestamp())
+				.payedOn(paymentDetails.getTimestamp())
 				.build();
 		
 		log.info("Payment details for the payment with an order ID of {} retireved successfully.", orderId);

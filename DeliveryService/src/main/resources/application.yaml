@@ -1,0 +1,42 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: DELIVERY-SERVICE
+  datasource:
+    url: jdbc:sqlserver://localhost:1433;databaseName=DeliveryDb;encrypt=true;trustServerCertificate=true
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+    hikari:
+      maximum-pool-size: 10  
+      minimum-idle: 5        
+      idle-timeout: 600000   
+      max-lifetime: 1800000 
+      connection-timeout: 30000 
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.SQLServerDialect
+    show-sql: true
+    properties:
+      hibernate:
+        '[format_sql]': true
+   
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9092 
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+

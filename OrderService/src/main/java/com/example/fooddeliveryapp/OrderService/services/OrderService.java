@@ -14,10 +14,12 @@ import com.example.fooddeliveryapp.OrderService.entities.Order;
 import com.example.fooddeliveryapp.OrderService.entities.OrderItem;
 import com.example.fooddeliveryapp.OrderService.exceptions.EmptyOrderException;
 import com.example.fooddeliveryapp.OrderService.exceptions.OrderNotFoundException;
+import com.example.fooddeliveryapp.OrderService.external.clients.IDeliveryService;
 import com.example.fooddeliveryapp.OrderService.external.clients.IPaymentService;
 import com.example.fooddeliveryapp.OrderService.external.clients.IRestaurantService;
 import com.example.fooddeliveryapp.OrderService.external.exceptions.DishNotAvailableException;
 import com.example.fooddeliveryapp.OrderService.external.exceptions.DishNotFoundException;
+import com.example.fooddeliveryapp.OrderService.external.models.DeliveryRequest;
 import com.example.fooddeliveryapp.OrderService.external.models.DishResponse;
 import com.example.fooddeliveryapp.OrderService.external.models.PaymentRequest;
 import com.example.fooddeliveryapp.OrderService.external.models.PaymentResponse;
@@ -41,12 +43,14 @@ public class OrderService implements IOrderService{
 	private final OrderRepository orderRepository;
 	private final IRestaurantService restaurantService;
 	private final IPaymentService paymentService;
+	private final IDeliveryService deliveryService;
 	
 	@Autowired
-	public OrderService(OrderRepository orderRepository, IRestaurantService restaurantService, IPaymentService paymentService) {
+	public OrderService(OrderRepository orderRepository, IRestaurantService restaurantService, IPaymentService paymentService, IDeliveryService deliveryService) {
 		this.orderRepository = orderRepository;
 		this.restaurantService = restaurantService;
 		this.paymentService = paymentService;
+		this.deliveryService = deliveryService;
 	}
 	
     /**
@@ -80,7 +84,7 @@ public class OrderService implements IOrderService{
 				.orderId(order.getOrderId())
 				.status(order.getStatus())
 				.amount(order.getTotalPrice())
-				.timestamp(order.getTimestamp())
+				.createdAt(order.getTimestamp())
 				.dishes(dishes)
 				.paymentDetails(paymentDetails)
 				.build();
@@ -122,9 +126,11 @@ public class OrderService implements IOrderService{
 
 	    Order order = saveOrder(orderRequest, orderItems, totalPrice);
 	    
-	    processPayment(order, orderRequest);
-
-	    //initiateDelivery(order);
+	    boolean paymentSuccessful = processPayment(order, orderRequest);
+	    
+	    if (paymentSuccessful) {
+	        initiateDelivery(order);
+	    }
 
 	    log.info("Order processed and delivered successfully.");
 	    
@@ -228,35 +234,40 @@ public class OrderService implements IOrderService{
 	    return order;
 	}
 	
-	private void processPayment(Order order, OrderRequest orderRequest) {
+	private boolean processPayment(Order order, OrderRequest orderRequest) {
+		log.info("Initiating payment process...");
 	    PaymentRequest paymentRequest = PaymentRequest.builder()
 	    		.orderId(order.getOrderId())
 	    		.paymentMode(orderRequest.getPaymentMode())
 	    		.amount(order.getTotalPrice())
 	    		.build();
 	    
-	    OrderStatus orderStatus = null;
-	    
 	    try {
-	    	paymentService.pay(paymentRequest);
-	    	orderStatus = OrderStatus.PAYED;
-	    	// to-do: initiate delivery here after successful payment
-	    } catch(Exception ex) {
-	    	log.error("Error occured in Payment service while processing payment. Error: {} ", ex.getMessage());
-	    	orderStatus = OrderStatus.CANCELED;
+	        paymentService.pay(paymentRequest);
+	        updateOrderStatus(order.getOrderId(), OrderStatus.PAYED);
+	        log.info("Payment processed successfully for Order ID: {}", order.getOrderId());
+	        return true; 
+	    } catch (Exception ex) {
+	        log.error("Error occurred in Payment service while processing payment. Error: {}", ex.getMessage());
+	        updateOrderStatus(order.getOrderId(), OrderStatus.CANCELED);
+	        return false;
 	    }
-	    
-	    updateOrderStatus(order.getOrderId(), orderStatus);
 	}
 	
 	private void initiateDelivery(Order order) {
 		log.info("Initiating delivery process...");
-	    /*DeliveryRequest deliveryRequest = new DeliveryRequest(order.getOrderId(), order.getUserId(), order.getRestaurantId(), order.getOrderItems());
-	    ResponseEntity<DeliveryResponse> deliveryResponse = deliveryService.initiateDelivery(deliveryRequest);
+		
+		DeliveryRequest deliveryRequest = DeliveryRequest.builder()
+		        .orderId(order.getOrderId())
+		        .userId(order.getUserId())
+		        .restaurantId(order.getRestaurantId())
+		        .build();
 
-	    if (!deliveryResponse.getStatusCode().is2xxSuccessful() || !deliveryResponse.getBody().isDeliveryInitiated()) {
-	        log.error("Failed to initiate delivery for order: " + order.getOrderId());
-	        throw new DeliveryException("Delivery initiation failed.");
-	    }*/
+	    try {
+	        deliveryService.initiateDelivery(deliveryRequest);
+	        updateOrderStatus(order.getOrderId(), OrderStatus.DELIVERING);
+	    } catch (Exception ex) {
+	        log.error("Failed to initiate delivery for order: {}. Error: {}", order.getOrderId(), ex.getMessage());
+	    }
 	}
 }
