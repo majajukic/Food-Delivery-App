@@ -16,6 +16,10 @@ spring:
              args:
               name: RESTAURANT-SERVICE
               fallbackuri: /restaurantServiceFallBack
+           - name: RequestRateLimiter
+             args:
+               '[redis-rate-limiter.replenishRate]': 1
+               '[redis-rate-limiter.burstCapacity]': 1
         - id: ORDER-SERVICE
           uri: lb://ORDER-SERVICE
           predicates:
@@ -25,6 +29,10 @@ spring:
              args:
               name: ORDER-SERVICE
               fallbackuri: /orderServiceFallBack
+           - name: RequestRateLimiter
+             args:
+               '[redis-rate-limiter.replenishRate]': 1
+               '[redis-rate-limiter.burstCapacity]': 1
         - id: PAYMENT-SERVICE
           uri: lb://PAYMENT-SERVICE
           predicates:
@@ -34,6 +42,10 @@ spring:
              args:
               name: PAYMENT-SERVICE
               fallbackuri: /paymentServiceFallBack
+           - name: RequestRateLimiter
+             args:
+               '[redis-rate-limiter.replenishRate]': 1
+               '[redis-rate-limiter.burstCapacity]': 1
         - id: DELIVERY-SERVICE
           uri: lb://DELIVERY-SERVICE
           predicates:
@@ -43,6 +55,10 @@ spring:
              args:
               name: DELIVERY-SERVICE
               fallbackuri: deliveryServiceFallBack
+           - name: RequestRateLimiter
+             args:
+               '[redis-rate-limiter.replenishRate]': 1
+               '[redis-rate-limiter.burstCapacity]': 1
         
 eureka:
   instance:
