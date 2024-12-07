@@ -7,13 +7,20 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
-@Configuration
-@EnableWebFluxSecurity
+@Configuration  // Marks this class as a configuration class that can define beans
+@EnableWebFluxSecurity  // Enables WebFlux Security, which is required for reactive applications
 public class OktaOAuth2WebSecurity {
 
-   @Bean
+    /**
+     * Configures the security filter chain for WebFlux.
+     *
+     * @param http The ServerHttpSecurity object that is used to configure security settings.
+     * @return A SecurityWebFilterChain that applies the security configuration.
+     */
+    @Bean
     public SecurityWebFilterChain filterChain(ServerHttpSecurity http) throws Exception {
         http
+            // disabling CSRF protection, not needed for jwt auth
             .csrf(csrf -> csrf.disable())
             .authorizeExchange(exchanges -> exchanges
                 .anyExchange().authenticated()
