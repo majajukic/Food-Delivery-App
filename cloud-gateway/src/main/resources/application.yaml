@@ -66,7 +66,7 @@ okta:
     audience: api://default
     client-id: 0oalokxgzrA44YdvS5d7
     client-secret: P-h-6gsmJhOE2zLlBrDImWo7KRnHI0BotU0Zb7BbTkpV3xk5KDfvnbJTB_5v3usC
-    scopes: openid, email, profile, offline_access
+    scopes: openid, email, profile, offline_access, internal
         
 eureka:
   instance:

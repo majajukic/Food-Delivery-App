@@ -31,6 +31,11 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
+okta:
+  oauth2:
+    issuer: https://dev-53200939.okta.com/oauth2/default
+    audience: api://default
+
 eureka:
   instance:
     prefer-ip-address: true

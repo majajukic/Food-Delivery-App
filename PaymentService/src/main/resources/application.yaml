@@ -25,6 +25,11 @@ spring:
       hibernate:
         '[format_sql]': true
 
+okta:
+  oauth2:
+    issuer: https://dev-53200939.okta.com/oauth2/default
+    audience: api://default
+
 eureka:
   instance:
     prefer-ip-address: true

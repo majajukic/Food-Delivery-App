@@ -2,7 +2,6 @@ package com.fooddeliveryservice.cloudgateway.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.config.Customizer;
@@ -17,13 +16,6 @@ public class OktaOAuth2WebSecurity {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeExchange(exchanges -> exchanges
-                // permitting GET requests for the specified routes without authentication
-                .pathMatchers(HttpMethod.GET, "/restaurants", 
-                             "/restaurants/**", 
-                             "/restaurants/*/dishes",
-                             "/restaurants/dishes/*").permitAll()
-
-                // requiring authentication for all other routes
                 .anyExchange().authenticated()
             )
             .oauth2Login(Customizer.withDefaults())
