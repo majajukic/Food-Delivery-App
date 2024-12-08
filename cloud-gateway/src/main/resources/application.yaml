@@ -59,6 +59,19 @@ spring:
              args:
                '[redis-rate-limiter.replenishRate]': 1
                '[redis-rate-limiter.burstCapacity]': 1
+        - id: USER-SERVICE
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/users/**
+          filters:
+           - name: CircuitBreaker
+             args:
+              name: USER-SERVICE
+              fallbackuri: /userServiceFallBack
+           - name: RequestRateLimiter
+             args:
+               '[redis-rate-limiter.replenishRate]': 1
+               '[redis-rate-limiter.burstCapacity]': 1
                
 okta:
   oauth2:
@@ -66,7 +79,7 @@ okta:
     audience: api://default
     client-id: ${SPRING_OKTA_CLIENT_ID}
     client-secret: ${SPRING_OKTA_CLIENT_SECRET}
-    scopes: openid, email, profile, offline_access, internal
+    scopes: openid, email, profile, offline_access, internal, okta.users.read, okta.users.read.self
         
 eureka:
   instance:
