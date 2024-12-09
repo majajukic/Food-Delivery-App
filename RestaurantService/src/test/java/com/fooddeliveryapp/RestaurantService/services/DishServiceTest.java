@@ -79,9 +79,9 @@ public class DishServiceTest {
         assertEquals(10.0, dishResponse.getPrice(), 0.01);
     }
 
-    @DisplayName("Get Dish by ID - Failure Scenario (Dish Not Found)")
+    @DisplayName("Get Dish by ID - Failure Scenario")
     @Test
-    public void test_When_Get_Dish_By_Id_Fail() {
+    public void test_When_Get_Dish_By_Id_Fail_Dish_Not_Found() {
         UUID dishId = UUID.randomUUID();
         Mockito.when(dishRepository.findById(dishId)).thenReturn(Optional.empty());
 
@@ -93,6 +93,7 @@ public class DishServiceTest {
         Mockito.verify(dishRepository, Mockito.times(1)).findById(dishId);
     }
     
+    @DisplayName("Add Dish To Restaurant - Success Scenario")
     @Test
     public void test_When_Add_Dish_ToRestaurant_Success() {
         UUID restaurantId = UUID.randomUUID();
@@ -119,6 +120,7 @@ public class DishServiceTest {
         Mockito.verify(dishRepository).save(Mockito.any(Dish.class));
     }
     
+    @DisplayName("Update Dish - Success Scenario")
     @Test
     public void test_When_Update_Dish_Successful() {
         UUID restaurantId = UUID.randomUUID();

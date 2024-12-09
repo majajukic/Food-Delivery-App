@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -41,8 +42,9 @@ public class UserServiceTest {
         when(jwt.getTokenValue()).thenReturn("mocked-jwt-token");
     }
 
+    @DisplayName("Get User Profile Details - Success Scenario")
     @Test
-    public void test_When_Get_UserProfile_Details_Success() {
+    public void test_When_Get_User_Profile_Details_Success() {
         OktaUserResponse mockOktaUserResponse = new OktaUserResponse();
         mockOktaUserResponse.setEmail("testuser@example.com");
         mockOktaUserResponse.setGiven_name("John");
@@ -65,8 +67,9 @@ public class UserServiceTest {
         verify(restTemplate, times(1)).exchange(eq(USERINFO_ENDPOINT), eq(HttpMethod.GET), any(HttpEntity.class), eq(OktaUserResponse.class));
     }
     
+    @DisplayName("Get User Profile Details - Failure Scenario")
     @Test(expected = RuntimeException.class)
-    public void testGetUserProfileDetails_UserNotFound() {
+    public void test_When_Get_User_Profile_Details_User_Not_Found() {
         // a mock response that returns null body (i.e., user not found)
         ResponseEntity<OktaUserResponse> mockResponse = new ResponseEntity<>(null, HttpStatus.OK);
         when(restTemplate.exchange(eq(USERINFO_ENDPOINT), eq(HttpMethod.GET), any(HttpEntity.class), eq(OktaUserResponse.class)))
@@ -75,8 +78,9 @@ public class UserServiceTest {
         userService.getUserProfileDetails();
     }
 
+    @DisplayName("Get User Profile Details - Failure Scenario (external api failure)")
     @Test(expected = RuntimeException.class)
-    public void test_When_GetUser_Profile_Details_Failure() {
+    public void test_When_Get_User_Profile_Details_Failure() {
         when(restTemplate.exchange(eq(USERINFO_ENDPOINT), eq(HttpMethod.GET), any(HttpEntity.class), eq(OktaUserResponse.class)))
             .thenThrow(new RuntimeException("External API failure"));
 
