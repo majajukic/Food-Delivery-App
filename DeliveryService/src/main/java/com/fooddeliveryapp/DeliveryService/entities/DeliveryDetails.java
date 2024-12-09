@@ -40,8 +40,8 @@ public class DeliveryDetails {
 	    @Column(name = "restaurant_id", nullable = false)
 	    private UUID restaurantId;
 
-	    @Column(name = "user_id", nullable = true) // can be null until authentication is implemented
-	    private UUID userId;
+	    @Column(name = "user_id", nullable = false)
+	    private String userId;
 
 	    @Enumerated(EnumType.STRING)
 	    @Column(name = "delivery_status", nullable = false)

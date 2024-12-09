@@ -86,6 +86,7 @@ public class OrderService implements IOrderService{
 				.status(order.getStatus())
 				.amount(order.getTotalPrice())
 				.createdAt(order.getTimestamp())
+				.madeBy(order.getUserId())
 				.dishes(dishes)
 				.paymentDetails(paymentDetails)
 				.deliveryDetails(deliveryDetails)
@@ -119,19 +120,19 @@ public class OrderService implements IOrderService{
 	 * @throws EmptyOrderException if the order has no order items.
 	 */
 	@Override
-	public UUID processOrder(@Valid OrderRequest orderRequest) {
+	public UUID processOrder(@Valid OrderRequest orderRequest, String userEmail) {
 	    log.info("Processing the order...");
 
 	    List<OrderItem> orderItems = validateAndPrepareOrderItems(orderRequest);
 
 	    double totalPrice = calculateTotalPrice(orderItems);
 
-	    Order order = saveOrder(orderRequest, orderItems, totalPrice);
+	    Order order = saveOrder(orderRequest, orderItems, totalPrice, userEmail);
 	    
 	    boolean paymentSuccessful = processPayment(order, orderRequest);
 	    
 	    if (paymentSuccessful) {
-	        initiateDelivery(order);
+	        initiateDelivery(order, userEmail);
 	    }
 
 	    log.info("Order processed and delivered successfully.");
@@ -202,9 +203,9 @@ public class OrderService implements IOrderService{
 	            .sum();
 	}
 	
-	private Order saveOrder(OrderRequest orderRequest, List<OrderItem> orderItems, double totalPrice) {
+	private Order saveOrder(OrderRequest orderRequest, List<OrderItem> orderItems, double totalPrice, String userEmail) {
 	    Order order = new Order();
-	    order.setUserId(orderRequest.getUserId());
+	    order.setUserId(userEmail);
 	    order.setRestaurantId(orderRequest.getRestaurantId());
 	    order.setTotalPrice(totalPrice);
 	    order.setStatus(OrderStatus.PLACED);
@@ -238,12 +239,12 @@ public class OrderService implements IOrderService{
 	    }
 	}
 	
-	private void initiateDelivery(Order order) {
+	private void initiateDelivery(Order order, String userEmail) {
 		log.info("Initiating delivery process...");
 		
 		DeliveryRequest deliveryRequest = DeliveryRequest.builder()
 		        .orderId(order.getOrderId())
-		        .userId(order.getUserId())
+		        .userId(userEmail)
 		        .restaurantId(order.getRestaurantId())
 		        .build();
 

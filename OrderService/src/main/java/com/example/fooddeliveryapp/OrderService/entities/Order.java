@@ -38,9 +38,8 @@ public class Order {
     @Column(name = "order_id")
     private UUID orderId;
 	
-	//to do: make this not nullable when authentication is implemented
-	@Column(name = "user_id", nullable = true)
-    private UUID userId;
+	@Column(name = "user_id", nullable = false)
+    private String userId;
 	
 	@Column(name = "restaurant_id", nullable = false)
 	private UUID restaurantId;

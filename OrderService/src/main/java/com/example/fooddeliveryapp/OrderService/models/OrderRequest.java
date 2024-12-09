@@ -15,9 +15,7 @@ import lombok.Data;
  * when creating a new order record.
  */
 @Data
-public class OrderRequest {
-	private UUID userId; // will be null until authentication is implemented
-	
+public class OrderRequest {	
 	@NotNull(message = "Restaurant ID must not be null")
     private UUID restaurantId;
 	

@@ -15,7 +15,7 @@ import jakarta.validation.Valid;
  */
 public interface IOrderService {
 
-	UUID processOrder(@Valid OrderRequest orderRequest);
+	UUID processOrder(@Valid OrderRequest orderRequest, String userEmail);
 
 	OrderResponse getOrderDetails(UUID orderId);
 }

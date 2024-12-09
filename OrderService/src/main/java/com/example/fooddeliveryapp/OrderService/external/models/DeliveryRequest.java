@@ -21,7 +21,8 @@ public class DeliveryRequest {
 	@NotNull(message = "Order ID cannot be null.")
     private UUID orderId;
 	
-    private UUID userId; // can be null until authentication is implemented
+	@NotNull(message = "User ID (email) cannot be null.")
+    private String userId;
     
     @NotNull(message = "Restaurant ID cannot be null.")
     private UUID restaurantId;

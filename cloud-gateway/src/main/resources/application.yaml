@@ -79,7 +79,7 @@ okta:
     audience: api://default
     client-id: ${SPRING_OKTA_CLIENT_ID}
     client-secret: ${SPRING_OKTA_CLIENT_SECRET}
-    scopes: openid, email, profile, offline_access, internal, okta.users.read, okta.users.read.self
+    scopes: openid, email, profile, offline_access, internal
         
 eureka:
   instance:

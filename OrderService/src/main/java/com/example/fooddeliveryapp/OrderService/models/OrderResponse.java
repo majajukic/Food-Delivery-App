@@ -28,6 +28,7 @@ public class OrderResponse {
 	private LocalDateTime createdAt;
 	private OrderStatus status;
 	private Double amount;
+	private String madeBy;
 	private List<DishResponse> dishes;
 	private PaymentResponse paymentDetails;
 	private DeliveryResponse deliveryDetails;
