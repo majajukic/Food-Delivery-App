@@ -1,6 +1,9 @@
 package com.fooddeliveryapp.RestaurantService.models;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
@@ -10,6 +13,9 @@ import jakarta.validation.constraints.Size;
  * to the server when creating a new restaurant record.
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class RestaurantRequest {
 	@NotEmpty(message = "Restaurant name is required.")
     @Size(max = 100, message = "Restaurant name should not exceed 100 characters.")

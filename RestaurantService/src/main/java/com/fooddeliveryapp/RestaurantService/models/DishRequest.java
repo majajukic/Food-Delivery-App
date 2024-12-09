@@ -3,8 +3,10 @@ package com.fooddeliveryapp.RestaurantService.models;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Represents a request to add a new dish to a restaurant.
@@ -12,6 +14,9 @@ import lombok.Data;
  * when creating a new dish record.
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class DishRequest { 
     @NotEmpty(message = "Dish name is required.")
     @Size(max = 100, message = "Dish name should not exceed 100 characters.")

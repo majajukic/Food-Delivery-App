@@ -28,14 +28,11 @@ import lombok.extern.log4j.Log4j2;
 @Service
 @Log4j2// Enables logging using Log4j2
 public class DishService implements IDishService {
-	private final DishRepository dishRepository;
-    private final RestaurantRepository restaurantRepository;
-
-    @Autowired
-    public DishService(DishRepository dishRepository, RestaurantRepository restaurantRepository) {
-        this.dishRepository = dishRepository;
-        this.restaurantRepository = restaurantRepository;
-    }
+	@Autowired
+	private DishRepository dishRepository;
+	
+	@Autowired
+    private RestaurantRepository restaurantRepository;
     
     /**
      * Retrieves all dishes for the specified restaurant.
