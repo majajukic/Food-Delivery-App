@@ -24,17 +24,15 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class DeliveryService implements IDeliveryService {
 
-    private final DeliveryRepository deliveryRepository;
-    private final KafkaTemplate<String, String> kafkaTemplate;
-    private final ObjectMapper objectMapper;
-    
-    @Autowired
-    public DeliveryService(DeliveryRepository deliveryRepository, KafkaTemplate<String, String> kafkaTemplate, ObjectMapper objectMapper) {
-        this.deliveryRepository = deliveryRepository;
-        this.kafkaTemplate = kafkaTemplate;
-        this.objectMapper = objectMapper;
-    }
-    
+	@Autowired
+    private DeliveryRepository deliveryRepository;
+	
+	@Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
+	
+	@Autowired
+    private ObjectMapper objectMapper;
+ 
     /**
      * Fetches delivery details by order ID.
      * This method retrieves the delivery information associated with a given order ID from the database.
