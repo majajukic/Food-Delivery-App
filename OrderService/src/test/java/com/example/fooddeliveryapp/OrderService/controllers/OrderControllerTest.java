@@ -89,31 +89,32 @@ public class OrderControllerTest {
     }
 	
 	@Test
-    public void test_WhenProcessOrder_Success() throws Exception {
-        OrderItemRequest itemRequest = OrderItemRequest.builder()
-                .dishId(UUID.randomUUID())
-                .quantity(2)
-                .build();
+	public void test_WhenProcessOrder_Success() throws Exception {
+	    OrderItemRequest itemRequest = OrderItemRequest.builder()
+	            .dishId(UUID.randomUUID())
+	            .quantity(2)
+	            .build();
 
-        OrderRequest orderRequest = OrderRequest.builder()
-                .restaurantId(UUID.randomUUID())
-                .paymentMode(PaymentMode.CARD)
-                .items(Arrays.asList(itemRequest))
-                .build();
+	    OrderRequest orderRequest = OrderRequest.builder()
+	            .restaurantId(UUID.randomUUID())
+	            .paymentMode(PaymentMode.CARD)
+	            .items(Arrays.asList(itemRequest))
+	            .build();
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/process-order")
-                .with(jwt().authorities(new SimpleGrantedAuthority("Customer")))
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(orderRequest)))
-                .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andReturn();
+	    UUID createdOrderId = orderService.processOrder(orderRequest, "user@gmail.com");
 
-        String actualResponse = mvcResult.getResponse().getContentAsString();
-        UUID returnedOrderId = UUID.fromString(actualResponse);
+	    Order savedOrder = orderRepository.findById(createdOrderId).orElseThrow();
+	    assertEquals(createdOrderId, savedOrder.getOrderId());
 
-        Order savedOrder = orderRepository.findById(returnedOrderId).orElseThrow();
-        assertEquals(returnedOrderId, savedOrder.getOrderId());
-    }
+	    MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/process-order")
+	            .with(jwt().authorities(new SimpleGrantedAuthority("Customer"))))
+	            .andExpect(MockMvcResultMatchers.status().isCreated())
+	            .andReturn();
+
+	    String actualResponse = mvcResult.getResponse().getContentAsString();
+	    UUID returnedOrderId = UUID.fromString(actualResponse);
+	    assertEquals(returnedOrderId, savedOrder.getOrderId());
+	}
 	
 	@Test
 	public void test_WhenGetOrder_Unauthorized() throws Exception {
