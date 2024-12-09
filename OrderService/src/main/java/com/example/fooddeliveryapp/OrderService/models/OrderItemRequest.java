@@ -4,7 +4,10 @@ import java.util.UUID;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Represents a request to add a new order item to an order.
@@ -12,6 +15,9 @@ import lombok.Data;
  * when creating a new order item record.
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class OrderItemRequest {
 	@NotNull(message = "Dish ID must not be null")
 	private UUID dishId;

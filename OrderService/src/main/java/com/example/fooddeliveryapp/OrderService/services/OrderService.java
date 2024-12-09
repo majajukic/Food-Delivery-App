@@ -41,18 +41,17 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class OrderService implements IOrderService{
 
-	private final OrderRepository orderRepository;
-	private final IRestaurantService restaurantService;
-	private final IPaymentService paymentService;
-	private final IDeliveryService deliveryService;
+	@Autowired
+	private OrderRepository orderRepository;
 	
 	@Autowired
-	public OrderService(OrderRepository orderRepository, IRestaurantService restaurantService, IPaymentService paymentService, IDeliveryService deliveryService) {
-		this.orderRepository = orderRepository;
-		this.restaurantService = restaurantService;
-		this.paymentService = paymentService;
-		this.deliveryService = deliveryService;
-	}
+	private IRestaurantService restaurantService;
+	
+	@Autowired
+	private IPaymentService paymentService;
+	
+	@Autowired
+	private IDeliveryService deliveryService;
 	
     /**
      * Retrieves the details of a specific order by its ID.

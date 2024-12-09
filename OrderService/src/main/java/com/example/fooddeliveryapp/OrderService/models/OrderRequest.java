@@ -7,7 +7,10 @@ import com.example.fooddeliveryapp.OrderService.external.constants.PaymentMode;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Represents a request to place a new order with order items
@@ -15,6 +18,9 @@ import lombok.Data;
  * when creating a new order record.
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class OrderRequest {	
 	@NotNull(message = "Restaurant ID must not be null")
     private UUID restaurantId;
