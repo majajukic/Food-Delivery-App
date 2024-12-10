@@ -54,8 +54,7 @@ services:
       - food-delivery-app_default
     environment:
       DB_HOST: payment-db
-      SPRING_OKTA_CLIENT_ID: ${SPRING_OKTA_CLIENT_ID}
-      SPRING_OKTA_CLIENT_SECRET: ${SPRING_OKTA_CLIENT_SECRET}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
       EUREKA_SERVER_ADDRESS: http://eureka-server:8761/eureka
 
   # Delivery Service
@@ -72,7 +71,6 @@ services:
       - food-delivery-app_default
     environment:
       DB_HOST: delivery-db
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
       EUREKA_SERVER_ADDRESS: http://eureka-server:8761/eureka
 
@@ -93,7 +91,6 @@ services:
       - food-delivery-app_default
     environment:
       DB_HOST: order-db
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
       SPRING_OKTA_CLIENT_ID: ${SPRING_OKTA_CLIENT_ID}
       SPRING_OKTA_CLIENT_SECRET: ${SPRING_OKTA_CLIENT_SECRET}
@@ -112,7 +109,6 @@ services:
       - food-delivery-app_default
     environment:
       DB_HOST: restaurant-db
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
       EUREKA_SERVER_ADDRESS: http://eureka-server:8761/eureka
 
