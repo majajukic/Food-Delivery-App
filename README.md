@@ -21,7 +21,7 @@ This project is a **microservices-based food delivery application** built using 
 ### 2. **API Gateway**
 
 - **Technology**: Spring Cloud Gateway
-- **Purpose**: The API gateway acts as the entry point for all client requests and routes the requests to the appropriate microservices. It integrates with **Okta** for authentication. It authenticates requests and propagates the authentication context down the pipeline for other services.
+- **Purpose**: The API gateway acts as the entry point for all client requests and routes the requests to the appropriate microservices. It integrates with **Okta** for authentication and auhtorizaion (there are 2 user roles: *Admin* and *Customer*). It authenticates requests and propagates the authentication context down the pipeline for other services.
 - **Docker Container**: `api-gateway`
 - **Port**: `9090`
 - **Dependencies**:
@@ -135,10 +135,114 @@ Each microservice contains a *Dockerfile* and is packaged as a **Docker containe
 - **Zookeeper**: Required for Kafka's coordination and management.
 - **MS SQL Databases**: Each microservice (restaurant, order, payment and delivery) has its own database container.
 
-Additionally, there is a `docker-compose.yml` file at the root of the project which is used  to configure and run all the services, including microservices, Kafka, Redis, and the database containers.
-**Command**: 
-   ```bash
-   docker-compose up --build
-   ```
-**Important**: It should be noted that some environment varibales in the docker-compose file represent my own database and okta credentials which are pulled from system's local environment for security reasons. Therefore, to test this project, you should set up your own version of those variables in your local environment.
+## Docker-compose.yml file
 
+Alongside the *Dockerfile* for each of the microservices, there is a `docker-compose.yml` file at the root of the project. This file is used to configure and run all the services, including microservices, Kafka, Redis, and the database containers. Below are the details of its construction:
+
+### Versioning
+The `docker-compose.yml` file uses version `3.8`, which supports advanced features such as health checks, secrets, and enhanced networking.
+
+### Services
+
+#### Microservices and Dependencies
+Each microservice and its dependencies (Redis, Kafka, Zookeeper, MS SQL Server, etc.) are defined as separate services under the `services` section. Below are the key components for each service:
+
+- **Image**: Specifies the Docker image for the service. For custom services, images are tagged with the project namespace (e.g., `fooddeliveryapp/<service-name>`).
+- **Container Name**: Assigns a user-friendly name for easier identification during debugging.
+- **Ports**: Maps internal container ports to external host ports for service accessibility.
+- **Networks**: Ensures all services communicate within a shared Docker bridge network, `food-delivery-app_default`.
+- **Environment Variables**: Passes configuration settings, such as database credentials or Okta client credentials, to services dynamically.
+
+#### Service Dependencies
+The `depends_on` directive is used to specify dependencies between services. For example, services like Kafka, Zookeeper, and Eureka must start before dependent microservices.  
+
+### Databases
+
+#### Dedicated Database Containers
+Each microservice has a dedicated MS SQL Server database container to ensure:
+
+- **Data Isolation**: Each service has its own database, preventing conflicts.
+- **Scaling**: Services and databases can be scaled independently.
+
+#### Configuration:
+- **Volumes**: Used to initialize the databases using SQL scripts (e.g., `db-init-script.sql`).
+- **Environment Variables**: 
+  - `ACCEPT_EULA`: Indicates acceptance of the MS SQL Server license agreement.
+  - `SA_PASSWORD`: Configures the admin password for the database.
+
+### Environment Variables
+Sensitive configurations, such as database passwords and Okta credentials, are passed as environment variables for security. 
+
+- These variables can be securely stored in a `.env` file and referenced automatically during `docker-compose` execution.
+- **Important**: The provided `docker-compose.yml` file references environment variables that represent personal database and Okta credentials. To test this project, you should set up your own versions of these variables in your local environment. Also, since **Okta** is used both as an auth provider and user registry, you should add some of your own test users to the portal to be able to test authentication and authorization in the app.
+
+### Networking
+All containers operate within the custom bridge network (`food-delivery-app_default`), enabling secure communication between services without exposing internal connections to the host machine.
+
+### Running the Project
+
+To build and run all services, use the following command:
+
+```bash
+docker-compose up --build
+```
+
+## Example of placing an order and getting order details
+
+Once the containers are all up and running you can go to **http://localhost:9090/authentication/login** and login with the test user who is a **Customer** (you have to add some users and roles to your **Okta** portal for this beforehand). After successful user verification, you get back the reponse which contains *access-token*.  The value of that token should be sent inside the Request Headers when testing. In **Postman** you can then create a new POST request to route **http://localhost:9090/orders/process-order**. The body of the request should have some data (assuming you have also added some restaurant and dish data to the database):
+```
+```json
+{
+  "restaurantId": "replace-with-valid-restaurant-id",
+  "paymentMode": "CARD",
+  "items": [
+    {
+      "dishId": "replace-with-valid-dish-id,
+      "quantity": 2
+    },
+    {
+      "dishId": "replace-with-valid-dish-id",
+      "quantity": 1
+    }
+  ]
+}
+```
+If everything goes smoothly, the new order is saved, and you should get its ID back. Then, you can log in as a user who is an **Admin** and use the newly retrieved *access-token* in the header of the GET request to endpoint **http://localhost:9090/orders/<orderId>**
+You should get order details for the newly placed order as the reponse in a format like so:
+```
+{
+    "orderId": "806308bb-7abb-4666-a353-e3689677fe6d",
+    "createdAt": "2024-12-09T09:16:55.778499",
+    "status": "DELIVERED",
+    "amount": 670.0,
+    "madeBy": "janedoe@gmail.com",
+    "dishes": [
+        {
+            "dishId": "aea59ee7-dca1-4fd4-8235-e29e9e32b275",
+            "name": "California roll",
+            "price": 260.0,
+            "description": "Ukusna rolnica sa tunom, krem sirom, avokadom i susamom.",
+            "availability": true
+        },
+        {
+            "dishId": "a37ee368-f839-4d42-9829-e7254ca61a9f",
+            "name": "Vege roll",
+            "price": 150.0,
+            "description": "Vege rolnica sa krastavcem, susamom i avokadom.",
+            "availability": true
+        }
+    ],
+    "paymentDetails": {
+        "paymentId": "66401871-4d37-436d-a18f-9767dab052ef",
+        "paymentMode": "CARD",
+        "status": "SUCCESSFUL",
+        "payedOn": "2024-12-09T09:16:57.517308"
+    },
+    "deliveryDetails": {
+        "deliveryId": "f1817fe1-666c-4dd1-9c1b-5bd4ef28d4c0",
+        "deliveryStatus": "DELIVERED",
+        "initiatedAt": "2024-12-09T09:16:59.45091",
+        "deliveredAt": "2024-12-09T09:17:09.595168"
+    }
+}
+```
