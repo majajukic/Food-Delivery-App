@@ -26,7 +26,7 @@ spring:
         '[format_sql]': true
   kafka:
     consumer:
-      bootstrap-servers: localhost:9092  
+      bootstrap-servers: kafka:9092  
       group-id: order-group              
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
