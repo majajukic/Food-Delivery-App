@@ -207,7 +207,7 @@ Once the containers are all up and running you can go to **http://localhost:9090
   ]
 }
 ```
-If everything goes smoothly, the new order is saved, and you should get its ID back. Then, you can log in as a user who is an **Admin** and use the newly retrieved *access-token* in the header of the GET request to endpoint **http://localhost:9090/orders/<orderId>**
+If everything goes smoothly, the new order is saved, and you should get its ID back. Then, you can log in as a user who is an **Admin** and use the newly retrieved *access-token* in the header of the GET request to endpoint **http://localhost:9090/orders/valid-order-id** .
 You should get order details for the newly placed order as the reponse in a format like so:
 ```
 {
